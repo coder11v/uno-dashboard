@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Uno Tournament</title>
+  <style>
+    :root {
+      --main-color: #e63946;
+      --light-bg: #fefefe;
+      --table-border: #ccc;
+      --header-bg: #f8f8f8;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--light-bg);
+      margin: 0;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--main-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .controls {
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      font-size: 1rem;
+      border: none;
+      background-color: var(--main-color);
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #d62828;
+    }
+
+    table {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      border-collapse: collapse;
+      font-size: 1rem;
+      overflow-x: auto;
+    }
+
+    th, td {
+      border: 1px solid var(--table-border);
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--header-bg);
+    }
+
+    td[contenteditable="true"] {
+      background-color: #fffde7;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+
+    .total {
+      font-weight: bold;
+      background-color: #f1f1f1;
+    }
+
+    @media screen and (max-width: 600px) {
+      table {
+        font-size: 0.85rem;
+      }
+      input[type="checkbox"] {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 Uno Tournament Scoreboard 🎉</h1>
+
+  <div class="controls">
+    <button onclick="addPlayer()">➕ Add Player</button>
+    <button onclick="addRound()">➕ Add Round</button>
+  </div>
+
+  <table id="scoreTable">
+    <thead>
+      <tr id="headerRow">
+        <th>Player</th>
+        <th>Round 1</th>
+        <th>Round 2</th>
+        <th>Round 3</th>
+        <th>Total Wins</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr>
+        <td contenteditable="true">Jiya</td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td class="total">0</td>
+      </tr>
+      <tr>
+        <td contenteditable="true">Veer</td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td class="total">0</td>
+      </tr>
+      <tr>
+        <td contenteditable="true">Mom</td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td class="total">0</td>
+      </tr>
+      <tr>
+        <td contenteditable="true">Dad</td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td><input type="checkbox" onchange="updateTotals()"/></td>
+        <td class="total">0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function updateTotals() {
+      const rows = document.querySelectorAll('#tableBody tr');
+      rows.forEach(row => {
+        const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+        const totalCell = row.querySelector('.total');
+        let count = 0;
+        checkboxes.forEach(cb => {
+          if (cb.checked) count++;
+        });
+        totalCell.textContent = count;
+      });
+    }
+
+    function addPlayer() {
+      const tableBody = document.getElementById('tableBody');
+      const header = document.getElementById('headerRow');
+      const roundCount = header.children.length - 2; // exclude Player & Total Wins
+
+      const newRow = document.createElement('tr');
+      let rowHTML = `<td contenteditable="true">New Player</td>`;
+      for (let i = 0; i < roundCount; i++) {
+        rowHTML += `<td><input type="checkbox" onchange="updateTotals()"/></td>`;
+      }
+      rowHTML += `<td class="total">0</td>`;
+      newRow.innerHTML = rowHTML;
+      tableBody.appendChild(newRow);
+    }
+
+    function addRound() {
+      const header = document.getElementById('headerRow');
+      const newRoundNum = header.children.length - 1; // exclude Total Wins
+      const newHeader = document.createElement('th');
+      newHeader.textContent = `Round ${newRoundNum}`;
+      header.insertBefore(newHeader, header.lastElementChild);
+
+      const rows = document.querySelectorAll('#tableBody tr');
+      rows.forEach(row => {
+        const newCell = document.createElement('td');
+        newCell.innerHTML = `<input type="checkbox" onchange="updateTotals()"/>`;
+        row.insertBefore(newCell, row.lastElementChild);
+      });
+    }
+  </script>
+</body>
+</html>
