@@ -10,38 +10,68 @@
       --light-bg: #fefefe;
       --table-border: #ccc;
       --header-bg: #f8f8f8;
+      --modal-bg: rgba(0, 0, 0, 0.5);
+      --modal-content-bg: #fff;
+      --modal-border-radius: 8px;
+      --modal-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif; /* Changed to Inter as per instructions */
       background-color: var(--light-bg);
       margin: 0;
       padding: 1rem;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     h1 {
       color: var(--main-color);
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem; /* Adjusted margin to bring tagline closer */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .tagline {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem; /* Added margin below tagline */
     }
 
     .controls {
       margin-bottom: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
     }
 
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem; /* Increased padding for better touch target */
       margin: 0.25rem;
       font-size: 1rem;
       border: none;
       background-color: var(--main-color);
       color: white;
-      border-radius: 5px;
+      border-radius: var(--modal-border-radius); /* Rounded corners */
       cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
 
     button:hover {
       background-color: #d62828;
+      transform: translateY(-2px); /* Slight lift on hover */
+    }
+
+    button:focus { /* Focus style for buttons */
+      outline: 2px solid var(--main-color);
+      outline-offset: 2px;
     }
 
     table {
@@ -51,24 +81,36 @@
       border-collapse: collapse;
       font-size: 1rem;
       overflow-x: auto;
+      border-radius: var(--modal-border-radius); /* Rounded corners for table */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for table */
     }
 
     th, td {
       border: 1px solid var(--table-border);
-      padding: 8px;
+      padding: 10px; /* Increased padding */
       text-align: center;
     }
 
     th {
       background-color: var(--header-bg);
+      font-weight: 600;
     }
 
     td[contenteditable="true"] {
       background-color: #fffde7;
+      border-radius: 4px; /* Rounded corners for editable cells */
+      transition: background-color 0.3s ease;
+    }
+
+    td[contenteditable="true"]:focus { /* Focus style for editable cells */
+      outline: 2px solid var(--main-color);
+      outline-offset: 1px;
+      background-color: #fffacd; /* Lighter yellow on focus */
     }
 
     input[type="checkbox"] {
-      transform: scale(1.2);
+      transform: scale(1.3); /* Slightly larger checkbox */
+      cursor: pointer;
     }
 
     .total {
@@ -76,22 +118,135 @@
       background-color: #f1f1f1;
     }
 
+    /* Modal styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: var(--modal-bg); /* Black w/ opacity */
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: var(--modal-content-bg);
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 25px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more responsive */
+      max-width: 400px;
+      border-radius: var(--modal-border-radius);
+      box-shadow: var(--modal-shadow);
+      text-align: center;
+      position: relative;
+    }
+
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: #333;
+      white-space: pre-wrap; /* Preserve whitespace and line breaks for LLM output */
+      text-align: left; /* Align text left for better readability of summary */
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .modal-buttons button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-buttons button.cancel-btn {
+      background-color: #6c757d;
+    }
+
+    .modal-buttons button.cancel-btn:hover {
+      background-color: #5a6268;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3; /* Light grey */
+      border-top: 4px solid var(--main-color); /* Red */
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
     @media screen and (max-width: 600px) {
       table {
         font-size: 0.85rem;
       }
       input[type="checkbox"] {
-        transform: scale(1);
+        transform: scale(1.1); /* Slightly smaller checkbox on mobile */
+      }
+      .modal-content {
+        width: 90%;
+        margin: 10% auto;
+      }
+      button {
+        padding: 0.6rem 1.2rem;
       }
     }
   </style>
 </head>
 <body>
-  <h1>🎉 Uno Tournament Scoreboard 🎉</h1>
+  <h1>
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-party-popper"><path d="M5.88 15.19c.35-.35 1.07.1 1.24.52.17.42-.23.8-.62 1.1-.28.2-.55.4-.78.6-.72.63-1.42 1.24-2.11 1.83a.9.9 0 0 1-1.25-.09c-.58-.58-.87-1.26-.93-1.94-.06-.68.18-1.34.62-1.85.2-.23.4-.46.6-.69z"/><path d="M18.12 8.81c-.35.35-1.07-.1-1.24-.52-.17-.42.23-.8.62-1.1.28-.2.55-.4.78-.6.72-.63 1.42-1.24 2.11-1.83a.9.9 0 0 1 1.25.09c.58.58.87 1.26.93 1.94.06.68-.18 1.34-.62 1.85-.2.23-.4.46-.6.69z"/><path d="M7 13v4"/><path d="M17 7v4"/><path d="M19 11h2"/><path d="M13 17h4"/><path d="M11 19v2"/><path d="M7 7H5"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>
+    Uno Tournament Scoreboard
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-party-popper"><path d="M5.88 15.19c.35-.35 1.07.1 1.24.52.17.42-.23.8-.62 1.1-.28.2-.55.4-.78.6-.72.63-1.42 1.24-2.11 1.83a.9.9 0 0 1-1.25-.09c-.58-.58-.87-1.26-.93-1.94-.06-.68.18-1.34.62-1.85.2-.23.4-.46.6-.69z"/><path d="M18.12 8.81c-.35.35-1.07-.1-1.24-.52-.17-.42.23-.8.62-1.1.28-.2.55-.4.78-.6.72-.63 1.42-1.24 2.11-1.83a.9.9 0 0 1 1.25.09c.58.58.87 1.26.93 1.94.06.68-.18 1.34-.62 1.85-.2.23-.4.46-.6.69z"/><path d="M7 13v4"/><path d="M17 7v4"/><path d="M19 11h2"/><path d="M13 17h4"/><path d="M11 19v2"/><path d="M7 7H5"/><path d="M12 12a3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>
+  </h1>
+  <p class="tagline">by ViB services</p>
 
   <div class="controls">
-    <button onclick="addPlayer()">➕ Add Player</button>
-    <button onclick="addRound()">➕ Add Round</button>
+    <button onclick="addPlayer()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+      Add Player
+    </button>
+    <button onclick="addRound()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus-circle"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+      Add Round
+    </button>
+    <button onclick="saveGameState()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Game
+    </button>
+    <button onclick="shareGame()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+      Share URL
+    </button>
+    <button onclick="generateTournamentSummary()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.9 10.8c.6.9 1.6 1.2 2.1 1.2s1.5-.3 2.1-1.2c.5-.9 1.6-1.2 2.1-1.2s1.5.3 2.1 1.2c.5.9 1.6 1.2 2.1 1.2s1.5-.3 2.1-1.2"/><path d="M2.1 10.8c.6.9 1.6 1.2 2.1 1.2s1.5-.3 2.1-1.2c.5-.9 1.6-1.2 2.1-1.2s1.5.3 2.1 1.2c.5.9 1.6 1.2 2.1 1.2s1.5-.3 2.1-1.2"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M22 12h-2"/><path d="M4 12H2"/></svg>
+      ✨ Tournament Summary
+    </button>
+    <button onclick="generateParticipationAwards()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17.154 22l-5.154-3L6.846 22 8.523 12.89"/></svg>
+      🏆 Participation Awards
+    </button>
+    <button onclick="resetGame()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.76 2.75L3 8"/><path d="M3 3v5h5"/></svg>
+      Reset Game
+    </button>
   </div>
 
   <table id="scoreTable">
@@ -105,38 +260,119 @@
       </tr>
     </thead>
     <tbody id="tableBody">
-      <tr>
-        <td contenteditable="true">Jiya</td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td class="total">0</td>
-      </tr>
-      <tr>
-        <td contenteditable="true">Veer</td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td class="total">0</td>
-      </tr>
-      <tr>
-        <td contenteditable="true">Mom</td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td class="total">0</td>
-      </tr>
-      <tr>
-        <td contenteditable="true">Dad</td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td><input type="checkbox" onchange="updateTotals()"/></td>
-        <td class="total">0</td>
-      </tr>
     </tbody>
   </table>
 
+  <!-- Custom Modal HTML -->
+  <div id="customModal" class="modal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <div class="modal-buttons">
+        <button id="modalOkBtn">OK</button>
+        <button id="modalCancelBtn" class="cancel-btn" style="display: none;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    const defaultPlayers = ['Jiya', 'Veer', 'Mom', 'Dad'];
+    let currentRoundCount = 0;
+    const LOCAL_STORAGE_KEY = 'unoTournamentGameState';
+
+    // --- Modal Functions ---
+    let modalCallback = null;
+
+    /**
+     * Shows a custom modal dialog.
+     * @param {string} message - The message to display in the modal.
+     * @param {'alert'|'confirm'} type - The type of modal ('alert' or 'confirm').
+     * @param {function} [callback] - Callback function to execute when modal is closed.
+     */
+    function showModal(message, type, callback = null) {
+      const modal = document.getElementById('customModal');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalOkBtn = document.getElementById('modalOkBtn');
+      const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+      modalMessage.innerHTML = message; // Use innerHTML to allow for loading spinner
+      modalCallback = callback; // Store the callback
+
+      if (type === 'confirm') {
+        modalCancelBtn.style.display = 'inline-block';
+        modalOkBtn.onclick = () => {
+          modal.style.display = 'none';
+          if (modalCallback) modalCallback(true);
+        };
+        modalCancelBtn.onclick = () => {
+          modal.style.display = 'none';
+          if (modalCallback) modalCallback(false);
+        };
+      } else { // 'alert'
+        modalCancelBtn.style.display = 'none';
+        modalOkBtn.onclick = () => {
+          modal.style.display = 'none';
+          if (modalCallback) modalCallback(); // For alerts, callback doesn't need a boolean
+        };
+      }
+      modal.style.display = 'flex'; // Use flex to center content
+    }
+
+    // --- Core Game Functions ---
+
+    /**
+     * Creates a new player row for the table.
+     * @param {string} playerName - The name of the player.
+     * @param {boolean[]} wins - An array of booleans indicating wins for each round.
+     * @returns {HTMLTableRowElement} The created table row element.
+     */
+    function createPlayerRow(playerName, wins) {
+      const newRow = document.createElement('tr');
+      let rowHTML = `<td contenteditable="true" onblur="saveGameState(true);">${playerName}</td>`;
+      // Ensure 'wins' array matches current rounds + future rounds
+      for (let i = 0; i < currentRoundCount; i++) {
+        const isChecked = wins && wins[i] ? 'checked' : '';
+        rowHTML += `<td><input type="checkbox" ${isChecked} onchange="updateTotals(); saveGameState(true);"/></td>`;
+      }
+      rowHTML += `<td class="total">0</td>`; // Total wins column
+      newRow.innerHTML = rowHTML;
+      return newRow;
+    }
+
+    /**
+     * Initializes or re-initializes the scoreboard table with player and round data.
+     * @param {string[]} players - An array of player names.
+     * @param {boolean[][]} roundsData - A 2D array where roundsData[roundIndex][playerIndex] is true if player won that round.
+     */
+    function initializeTable(players, roundsData) {
+      const tableBody = document.getElementById('tableBody');
+      const headerRow = document.getElementById('headerRow');
+      tableBody.innerHTML = ''; // Clear existing rows
+      headerRow.innerHTML = `<th>Player</th>`; // Reset header
+
+      // Determine current round count based on loaded data or default
+      currentRoundCount = roundsData && roundsData.length > 0 ? roundsData[0].length : 3;
+
+      // Reconstruct rounds in header
+      for (let i = 1; i <= currentRoundCount; i++) {
+        const newHeader = document.createElement('th');
+        newHeader.textContent = `Round ${i}`;
+        headerRow.appendChild(newHeader);
+      }
+      headerRow.innerHTML += `<th>Total Wins</th>`;
+
+      // Add players and their wins
+      players.forEach((playerName, playerIndex) => {
+        // Map roundsData to get wins for the current player across all rounds
+        const playerWins = roundsData ? roundsData.map(round => round[playerIndex]) : null;
+        tableBody.appendChild(createPlayerRow(playerName, playerWins));
+      });
+
+      updateTotals();
+    }
+
+    /**
+     * Updates the total wins for each player based on checked checkboxes.
+     */
     function updateTotals() {
       const rows = document.querySelectorAll('#tableBody tr');
       rows.forEach(row => {
@@ -150,35 +386,334 @@
       });
     }
 
+    /**
+     * Adds a new player row to the table and saves the game state.
+     */
     function addPlayer() {
       const tableBody = document.getElementById('tableBody');
-      const header = document.getElementById('headerRow');
-      const roundCount = header.children.length - 2; // exclude Player & Total Wins
-
-      const newRow = document.createElement('tr');
-      let rowHTML = `<td contenteditable="true">New Player</td>`;
-      for (let i = 0; i < roundCount; i++) {
-        rowHTML += `<td><input type="checkbox" onchange="updateTotals()"/></td>`;
-      }
-      rowHTML += `<td class="total">0</td>`;
-      newRow.innerHTML = rowHTML;
+      const newRow = createPlayerRow('New Player', []);
       tableBody.appendChild(newRow);
+      // Focus on the new player's name cell for immediate editing
+      const newPlayerCell = newRow.querySelector('td[contenteditable="true"]');
+      if (newPlayerCell) {
+        newPlayerCell.focus();
+        // Select all text in the cell for easy renaming
+        const range = document.createRange();
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      saveGameState(true); // Save state after adding player
     }
 
+    /**
+     * Adds a new round column to the table and saves the game state.
+     */
     function addRound() {
       const header = document.getElementById('headerRow');
-      const newRoundNum = header.children.length - 1; // exclude Total Wins
+      currentRoundCount++;
       const newHeader = document.createElement('th');
-      newHeader.textContent = `Round ${newRoundNum}`;
+      newHeader.textContent = `Round ${currentRoundCount}`;
+      // Insert new round header before the "Total Wins" header
       header.insertBefore(newHeader, header.lastElementChild);
 
       const rows = document.querySelectorAll('#tableBody tr');
       rows.forEach(row => {
         const newCell = document.createElement('td');
-        newCell.innerHTML = `<input type="checkbox" onchange="updateTotals()"/>`;
+        newCell.innerHTML = `<input type="checkbox" onchange="updateTotals(); saveGameState(true);"/>`;
+        // Insert new round checkbox cell before the "Total Wins" cell
         row.insertBefore(newCell, row.lastElementChild);
       });
+      saveGameState(true); // Save state after adding round
     }
+
+    /**
+     * Retrieves the current game state from the table.
+     * @returns {{players: string[], rounds: boolean[][]}} The current game state.
+     */
+    function getGameState() {
+      const players = [];
+      const roundsData = []; // Array of rounds, each round is an array of boolean wins for players
+
+      const rows = document.querySelectorAll('#tableBody tr');
+      const header = document.getElementById('headerRow');
+      const numRounds = header.children.length - 2; // Exclude Player and Total Wins columns
+
+      // Initialize roundsData with empty arrays for each round
+      for (let i = 0; i < numRounds; i++) {
+        roundsData.push([]);
+      }
+
+      rows.forEach((row, playerIndex) => {
+        const playerNameCell = row.querySelector('td[contenteditable="true"]');
+        const playerName = playerNameCell ? playerNameCell.textContent : `Player ${playerIndex + 1}`;
+        players.push(playerName);
+
+        const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((cb, roundIndex) => {
+          if (roundsData[roundIndex]) { // Ensure round array exists
+            roundsData[roundIndex][playerIndex] = cb.checked;
+          }
+        });
+      });
+
+      return { players, rounds: roundsData };
+    }
+
+    /**
+     * Saves the current game state to localStorage and optionally to URL.
+     * @param {boolean} silent - If true, suppresses the success message.
+     */
+    function saveGameState(silent = false) {
+      const gameState = getGameState();
+      const jsonString = JSON.stringify(gameState);
+
+      // Save to localStorage
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, jsonString);
+        if (!silent) {
+          showModal('Game state saved automatically to your browser!', 'alert');
+        }
+      } catch (e) {
+        console.error('Error saving to localStorage:', e);
+        if (!silent) {
+          showModal('Error saving game state automatically.', 'alert');
+        }
+      }
+    }
+
+    /**
+     * Shares the current game state by updating the URL.
+     */
+    function shareGame() {
+      const gameState = getGameState();
+      const jsonString = JSON.stringify(gameState);
+      // Encode to base64 and then URL-encode to handle special characters cleanly in URL query params
+      const encoded = encodeURIComponent(btoa(jsonString));
+      
+      const url = new URL(window.location.origin + window.location.pathname);
+      url.searchParams.set('gameState', encoded);
+
+      window.history.replaceState({}, '', url.toString()); // Update URL without reloading
+      console.log('Game state URL:', url.toString());
+      // Use custom modal instead of alert
+      showModal('Game state saved to URL! You can copy the URL from your browser address bar to share or bookmark.', 'alert');
+    }
+
+    /**
+     * Loads game state from localStorage or URL, prioritizing localStorage.
+     */
+    function loadGameState() {
+      let gameState = null;
+
+      // 1. Try loading from localStorage
+      try {
+        const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (localData) {
+          gameState = JSON.parse(localData);
+          console.log('Game state loaded from localStorage:', gameState);
+        }
+      } catch (e) {
+        console.error('Error loading from localStorage:', e);
+      }
+
+      // 2. If no local data, try loading from URL
+      if (!gameState) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const encoded = urlParams.get('gameState');
+        if (encoded) {
+          try {
+            const jsonString = atob(decodeURIComponent(encoded)); // Decode from URL-encoding then base64
+            gameState = JSON.parse(jsonString);
+            console.log('Game state loaded from URL:', gameState);
+            // If loaded from URL, save to localStorage for future auto-load
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState));
+          } catch (e) {
+            console.error('Error loading game state from URL:', e);
+            showModal('Could not load game from URL. Starting a new game.', 'alert');
+          }
+        }
+      }
+
+      // 3. Initialize table with loaded data or defaults
+      if (gameState && gameState.players && gameState.rounds) {
+        initializeTable(gameState.players, gameState.rounds);
+      } else {
+        initializeTable(defaultPlayers, null); // Start with default if no data found
+      }
+    }
+
+    /**
+     * Resets the game to its initial state.
+     */
+    function resetGame() {
+      showModal('Are you sure you want to reset the game? All current data will be lost.', 'confirm', (result) => {
+        if (result) {
+          const url = new URL(window.location.origin + window.location.pathname);
+          window.history.replaceState({}, '', url.toString()); // Remove query parameters
+          localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear localStorage
+          initializeTable(defaultPlayers, null);
+          showModal('Game reset successfully!', 'alert');
+        }
+      });
+    }
+
+    /**
+     * Generates a tournament summary using the Gemini API.
+     */
+    async function generateTournamentSummary() {
+      showModal('Generating tournament summary... <span class="loading-spinner"></span>', 'alert');
+
+      const gameState = getGameState();
+      const players = gameState.players;
+      const rounds = gameState.rounds; // rounds[roundIndex][playerIndex] is true if player won that round
+
+      // Calculate total wins for each player
+      const playerScores = players.map((player, index) => {
+        let wins = 0;
+        for (let i = 0; i < rounds.length; i++) {
+          if (rounds[i][index]) {
+            wins++;
+          }
+        }
+        return { name: player, wins: wins };
+      });
+
+      // Sort players by wins (descending)
+      playerScores.sort((a, b) => b.wins - a.wins);
+
+      let prompt = `Analyze the results of an Uno tournament. The players and their total wins are:\n`;
+      playerScores.forEach(p => {
+        prompt += `- ${p.name}: ${p.wins} wins\n`;
+      });
+
+      // Add details about individual rounds if available
+      if (rounds.length > 0) {
+        prompt += `\nHere's a round-by-round breakdown:\n`;
+        for (let i = 0; i < rounds.length; i++) {
+          const winnersInRound = players.filter((_, playerIndex) => rounds[i][playerIndex]);
+          if (winnersInRound.length > 0) {
+            prompt += `Round ${i + 1}: Won by ${winnersInRound.join(', ')}\n`;
+          } else {
+            prompt += `Round ${i + 1}: No winner recorded (or multiple winners not tracked individually)\n`;
+          }
+        }
+      }
+
+      prompt += `\nPlease provide a concise summary of the tournament, highlighting top performers, any interesting trends, or a fun observation. Keep it under 200 words.`;
+
+      try {
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Gemini API response not OK:', response.status, errorText);
+          showModal(`Failed to generate summary. API returned status ${response.status}. Details: ${errorText.substring(0, 100)}...`, 'alert');
+          return;
+        }
+
+        const result = await response.json();
+
+        if (result.candidates && result.candidates.length > 0 &&
+            result.candidates[0].content && result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0) {
+          const summaryText = result.candidates[0].content.parts[0].text;
+          showModal(`<h3>✨ Tournament Summary ✨</h3>\n\n${summaryText}`, 'alert');
+        } else {
+          showModal('Failed to generate summary. No valid content in AI response.', 'alert');
+          console.error('AI response structure unexpected:', result);
+        }
+      } catch (error) {
+        console.error('Error calling Gemini API for summary:', error);
+        showModal('Error generating summary. Please try again later.', 'alert');
+      }
+    }
+
+    /**
+     * Generates personalized participation awards for each player using the Gemini API.
+     */
+    async function generateParticipationAwards() {
+      showModal('Generating participation awards... <span class="loading-spinner"></span>', 'alert');
+
+      const gameState = getGameState();
+      const players = gameState.players;
+      const rounds = gameState.rounds;
+
+      const playerScores = players.map((player, index) => {
+        let wins = 0;
+        const roundWins = [];
+        for (let i = 0; i < rounds.length; i++) {
+          if (rounds[i][index]) {
+            wins++;
+            roundWins.push(`Round ${i + 1}`);
+          }
+        }
+        return { name: player, wins: wins, roundWins: roundWins };
+      });
+
+      let awardsHtml = '<h3>🏆 Participation Awards 🏆</h3>\n\n';
+      const awardPromises = playerScores.map(async (player) => {
+        let prompt = `Write a fun and encouraging participation award for ${player.name} who participated in an Uno tournament. `;
+        prompt += `They won ${player.wins} rounds.`;
+        if (player.roundWins.length > 0) {
+          prompt += ` They specifically won in ${player.roundWins.join(', ')}.`;
+        }
+        prompt += ` Keep the award text positive, lighthearted, and under 50 words. Focus on their effort, unique style, or a fun aspect of their play, regardless of wins.`;
+
+        try {
+          let chatHistory = [];
+          chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+          const payload = { contents: chatHistory };
+          const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Gemini API response not OK for ${player.name}:`, response.status, errorText);
+            return `<strong>${player.name}:</strong> Failed to generate award. API returned status ${response.status}. Details: ${errorText.substring(0, 50)}...\n\n`;
+          }
+
+          const result = await response.json();
+
+          if (result.candidates && result.candidates.length > 0 &&
+              result.candidates[0].content && result.candidates[0].content.parts &&
+              result.candidates[0].content.parts.length > 0) {
+            return `<strong>${player.name}:</strong> ${result.candidates[0].content.parts[0].text}\n\n`;
+          } else {
+            console.error(`Failed to generate award for ${player.name}: No valid content in AI response.`, result);
+            return `<strong>${player.name}:</strong> Award generation failed.\n\n`;
+          }
+        } catch (error) {
+          console.error(`Error calling Gemini API for ${player.name}:`, error);
+          return `<strong>${player.name}:</strong> Error generating award. Please try again later.\n\n`;
+        }
+      });
+
+      // Wait for all awards to be generated
+      const generatedAwards = await Promise.all(awardPromises);
+      awardsHtml += generatedAwards.join('');
+
+      showModal(awardsHtml, 'alert');
+    }
+
+    // Load game state when the page loads
+    window.onload = loadGameState;
   </script>
 </body>
 </html>
